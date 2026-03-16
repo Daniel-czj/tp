@@ -28,7 +28,6 @@ public class FitLogger {
             c.execute(ui);
             isExit = c.isExit();
         }
-        ui.showGoodbye();
     }
 
     public static void main(String[] args) {
