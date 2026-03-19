@@ -1,4 +1,8 @@
-package seedu.FitLogger;
+package seedu.fitlogger.command;
+
+import seedu.fitlogger.Storage;
+import seedu.fitlogger.Ui;
+import seedu.fitlogger.workout.WorkoutList;
 
 /**
  * Command that saves current workout data and exits the application.
