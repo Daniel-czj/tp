@@ -26,8 +26,7 @@ public class FitLogger {
 
             //later remove this line after u change the line above
             Command c = new ExitCommand(storage, workouts);
-            ui.temporaryOutput("execute function run");
-            
+
             c.execute(ui);
             isExit = c.isExit();
         }
