@@ -3,7 +3,7 @@ package fitlogger.workout;
 import java.time.LocalDate;
 
 /**
- * Represents a strength-based FitLogger.command.workout logged by the user.
+ * Represents a strength-based workout logged by the user.
  */
 public class StrengthWorkout extends Workout {
     private double weight;
@@ -17,7 +17,7 @@ public class StrengthWorkout extends Workout {
      * @param weight      The weight lifted in kilograms.
      * @param sets        The number of sets completed.
      * @param reps        The number of repetitions per set.
-     * @param date        The date the FitLogger.command.workout was completed.
+     * @param date        The date the workout was completed.
      */
     public StrengthWorkout(String description, double weight, int sets, int reps, LocalDate date) {
         super(description, date); // Passes the name and date to the Workout parent class
@@ -27,7 +27,7 @@ public class StrengthWorkout extends Workout {
     }
 
     /**
-     * Formats the FitLogger.command.workout details into a string for saving to a text file.
+     * Formats the workout details into a string for saving to a text file.
      * Includes the type [L], done status (1 or 0), date, and lifting stats.
      *
      * @return A formatted string suitable for local storage.
@@ -40,9 +40,9 @@ public class StrengthWorkout extends Workout {
     }
 
     /**
-     * Returns the string representation of the FitLogger.command.workout for the user interface.
+     * Returns the string representation of the workout for the user interface.
      *
-     * @return A formatted string displaying the FitLogger.command.workout details.
+     * @return A formatted string displaying the workout details.
      */
     @Override
     public String toString() {
