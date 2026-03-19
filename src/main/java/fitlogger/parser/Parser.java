@@ -1,6 +1,10 @@
 package fitlogger.parser;
 
-import fitlogger.command.*;
+import fitlogger.command.AddWorkoutCommand;
+import fitlogger.command.Command;
+import fitlogger.command.DeleteCommand;
+import fitlogger.command.ExitCommand;
+import fitlogger.command.ViewHistoryCommand;
 import fitlogger.exception.FitLoggerException;
 import fitlogger.workout.RunWorkout;
 import fitlogger.workout.Workout;
