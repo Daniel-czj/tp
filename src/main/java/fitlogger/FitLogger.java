@@ -1,7 +1,7 @@
 package fitlogger;
 
 import fitlogger.command.Command;
-import fitlogger.command.ExitCommand;
+import fitlogger.exception.FitLoggerException;
 import fitlogger.parser.Parser;
 import fitlogger.storage.Storage;
 import fitlogger.ui.Ui;
@@ -22,18 +22,19 @@ public class FitLogger {
         ui.showWelcome();
         boolean isExit = false;
         while (!isExit) {
-            String command = ui.readCommand();
+            try {
+                String command = ui.readCommand();
+                if (command.isBlank()) {
+                    continue;
+                }
+                Command c = Parser.parse(command, workouts, storage);
 
-            //later change this line to `Command c = parser.parse(command);` then parser calls based on keyword
-            Parser.parse(command);
-
-            //later remove this line after u change the line above
-            Command c = new ExitCommand(storage, workouts);
-
-            c.execute(ui);
-            isExit = c.isExit();
+                c.execute(ui);
+                isExit = c.isExit();
+            } catch (FitLoggerException e) {
+                System.out.println(e.getMessage());
+            }
         }
-        
     }
 
     public static void main(String[] args) {

@@ -5,11 +5,14 @@ import fitlogger.workout.Workout;
 import fitlogger.workoutlist.WorkoutList;
 
 /**
- * Deletes a workout from the in-memory workout list by name or by user-facing index.
+ * Deletes a workout from the in-memory workout list by name or by user-facing
+ * index.
  *
- * <p>Name matching is case-insensitive and compares against the full workout name.
+ * <p>
+ * Name matching is case-insensitive and compares against the full workout name.
  * Index matching uses one-based user input (e.g., "3") and maps it to
- * zero-based internal indexing.</p>
+ * zero-based internal indexing.
+ * </p>
  */
 public class DeleteCommand extends Command {
     /** The workout list managed by the application. */
@@ -21,7 +24,7 @@ public class DeleteCommand extends Command {
     /**
      * Creates a delete command with the target workout list and workout name.
      *
-     * @param workouts The workout list containing existing workouts.
+     * @param workouts    The workout list containing existing workouts.
      * @param workoutName The workout name to delete.
      */
     public DeleteCommand(WorkoutList workouts, String workoutName) {
@@ -32,15 +35,17 @@ public class DeleteCommand extends Command {
     /**
      * Executes the delete operation and prints feedback to the user.
      *
-     * <p>If no workout name is provided, a usage hint is shown. If a matching workout
-     * exists, it is removed from the list; otherwise, a not-found message is shown.</p>
+     * <p>
+     * If no workout name is provided, a usage hint is shown. If a matching workout
+     * exists, it is removed from the list; otherwise, a not-found message is shown.
+     * </p>
      *
      * @param ui UI component used to display command results.
      */
     @Override
     public void execute(Ui ui) {
         if (workoutName == null || workoutName.isBlank()) {
-            ui.temporaryOutput("Please specify a workout to delete. "
+            ui.showMessage("Please specify a workout to delete. "
                     + "Usage: delete workout <WORKOUT_NAME> or delete <index>");
             return;
         }
@@ -49,24 +54,27 @@ public class DeleteCommand extends Command {
         int indexToDelete = findWorkoutIndex(normalizedName);
 
         if (indexToDelete != -1) {
-            String deletedWorkoutName = workouts.getWorkout(indexToDelete).getDescription();
+            String deletedWorkoutName = workouts.getWorkoutAtIndex(indexToDelete).getDescription();
             workouts.deleteWorkout(indexToDelete);
-            ui.temporaryOutput("Deleted workout: " + deletedWorkoutName);
+            ui.showMessage("Deleted workout: " + deletedWorkoutName);
             return;
         }
 
-        ui.temporaryOutput("Workout not found: " + normalizedName);
+        ui.showMessage("Workout not found: " + normalizedName);
     }
 
     /**
      * Resolves the workout to delete from user input.
      *
-     * <p>The input is first treated as a one-based index (e.g., {@code 1} maps to
+     * <p>
+     * The input is first treated as a one-based index (e.g., {@code 1} maps to
      * internal index {@code 0}). If it is not a valid integer, the input is treated
-     * as a workout name and matched case-insensitively.</p>
+     * as a workout name and matched case-insensitively.
+     * </p>
      *
      * @param input Raw user-provided value after the delete command.
-     * @return The zero-based workout index if a match is found; {@code -1} otherwise.
+     * @return The zero-based workout index if a match is found; {@code -1}
+     *         otherwise.
      */
     private int findWorkoutIndex(String input) {
         Integer oneBasedIndex = parseUserProvidedIndex(input);
@@ -99,11 +107,12 @@ public class DeleteCommand extends Command {
      * Finds a workout by exact description match (case-insensitive).
      *
      * @param workoutNameToFind The workout name to search for.
-     * @return The zero-based index of the first matching workout, or {@code -1} if none matches.
+     * @return The zero-based index of the first matching workout, or {@code -1} if
+     *         none matches.
      */
     private int findWorkoutIndexByName(String workoutNameToFind) {
         for (int i = 0; i < workouts.getSize(); i++) {
-            Workout workout = workouts.getWorkout(i);
+            Workout workout = workouts.getWorkoutAtIndex(i);
             if (workout.getDescription().equalsIgnoreCase(workoutNameToFind)) {
                 return i;
             }
@@ -111,4 +120,3 @@ public class DeleteCommand extends Command {
         return -1;
     }
 }
-
