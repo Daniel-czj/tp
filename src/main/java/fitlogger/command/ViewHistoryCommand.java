@@ -15,7 +15,7 @@ public class ViewHistoryCommand extends Command {
         ui.showMessage("Here's your past exercises");
         ui.showLine();
         for (int i = 0; i < workouts.getSize(); i++) {
-            ui.showMessageNoNewline(String.valueOf(i+1) + ". ");
+            ui.showMessageNoNewline(i + 1 + ". ");
             ui.printWorkout(workouts.getWorkoutAtIndex(i));
         }
         ui.showLine();
