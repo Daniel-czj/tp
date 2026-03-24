@@ -1,6 +1,7 @@
 package fitlogger;
 
 import fitlogger.command.ViewHistoryCommand;
+import fitlogger.exception.FitLoggerException;
 import fitlogger.storage.Storage;
 import fitlogger.ui.Ui;
 import fitlogger.workout.RunWorkout;
@@ -38,7 +39,7 @@ class HistoryCommandTest {
     }
 
     @Test
-    void execute_withWorkouts_printsWorkoutsInOrder() {
+    void execute_withWorkouts_printsWorkoutsInOrder() throws FitLoggerException {
         Storage storage = new Storage();
         workouts.addWorkout(new RunWorkout("Morning Run", LocalDate.of(2026, 3, 15), 5.0, 1.0));
 
@@ -49,7 +50,7 @@ class HistoryCommandTest {
     }
 
     @Test
-    void execute_multipleWorkouts_matchesExactSequence() {
+    void execute_multipleWorkouts_matchesExactSequence() throws FitLoggerException {
         Storage storage = new Storage();
         workouts.addWorkout(new RunWorkout("test 1", LocalDate.of(2026, 3, 20), 1.0, 1.0));
         workouts.addWorkout(new RunWorkout("test 2", LocalDate.of(2026, 3, 21), 5.0, 30.0));

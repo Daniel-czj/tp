@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import fitlogger.exception.FitLoggerException;
 import fitlogger.workout.RunWorkout;
 import fitlogger.workout.StrengthWorkout;
 import fitlogger.workout.Workout;
@@ -170,8 +171,11 @@ public class Storage {
         double distance = parseDouble(fields[INDEX_RUN_DISTANCE], "distance");
         double duration = parseDouble(fields[INDEX_RUN_DURATION], "duration");
 
-        RunWorkout run = new RunWorkout(description, date, distance, duration);
-        return run;
+        try {
+            return new RunWorkout(description, date, distance, duration);
+        } catch (FitLoggerException exception) {
+            throw new IllegalArgumentException(exception.getMessage(), exception);
+        }
     }
 
     /**
@@ -193,8 +197,11 @@ public class Storage {
         int sets = parseInt(fields[INDEX_STRENGTH_SETS], "sets");
         int reps = parseInt(fields[INDEX_STRENGTH_REPS], "reps");
 
-        StrengthWorkout strength = new StrengthWorkout(description, weight, sets, reps, date);
-        return strength;
+        try {
+            return new StrengthWorkout(description, weight, sets, reps, date);
+        } catch (FitLoggerException exception) {
+            throw new IllegalArgumentException(exception.getMessage(), exception);
+        }
     }
 
     /**

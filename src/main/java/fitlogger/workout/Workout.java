@@ -1,5 +1,7 @@
 package fitlogger.workout;
 
+import fitlogger.exception.FitLoggerException;
+
 import java.time.LocalDate;
 
 /**
@@ -20,9 +22,10 @@ public abstract class Workout {
      *
      * @param description A short summary of the workout.
      * @param date        The date of the workout.
+     * @throws FitLoggerException if description is null or blank.
      */
-    public Workout(String description, LocalDate date) {
-        this.description = description;
+    public Workout(String description, LocalDate date) throws FitLoggerException {
+        setDescription(description);
         this.date = date;
     }
 
@@ -32,6 +35,19 @@ public abstract class Workout {
 
     public String getDescription() {
         return description;
+    }
+
+    /**
+     * Updates the workout description.
+     *
+     * @param description New non-blank description.
+     * @throws FitLoggerException if description is null or blank.
+     */
+    public void setDescription(String description) throws FitLoggerException {
+        if (description == null || description.isBlank()) {
+            throw new FitLoggerException("Workout name cannot be blank.");
+        }
+        this.description = description.trim();
     }
 
     /**

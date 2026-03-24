@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
 
+import fitlogger.exception.FitLoggerException;
 import fitlogger.workout.RunWorkout;
 import org.junit.jupiter.api.Test;
 
@@ -16,7 +17,7 @@ import fitlogger.ui.Ui;
 
 class DeleteCommandTest {
     @Test
-    void deleteWorkout_existingWorkout_deletesWorkout() {
+    void deleteWorkout_existingWorkout_deletesWorkout() throws FitLoggerException {
         Storage storage = new Storage();
         WorkoutList workouts = new WorkoutList();
         workouts.addWorkout(new RunWorkout("Squat", LocalDate.of(2026, 3, 15), 1.0, 1.0));
@@ -32,7 +33,7 @@ class DeleteCommandTest {
     }
 
     @Test
-    void deleteWorkout_byIndex_deletesWorkoutAtOneBasedPosition() {
+    void deleteWorkout_byIndex_deletesWorkoutAtOneBasedPosition() throws FitLoggerException {
         Storage storage = new Storage();
         WorkoutList workouts = new WorkoutList();
         workouts.addWorkout(new RunWorkout("Squat", LocalDate.of(2026, 3, 15), 1.0, 1.0));
@@ -50,7 +51,7 @@ class DeleteCommandTest {
     }
 
     @Test
-    void deleteWorkout_missingWorkoutName_showsUsageMessage() {
+    void deleteWorkout_missingWorkoutName_showsUsageMessage() throws FitLoggerException {
         Storage storage = new Storage();
         WorkoutList workouts = new WorkoutList();
         workouts.addWorkout(new RunWorkout("Deadlift", LocalDate.of(2026, 3, 15), 1.0, 1.0));
@@ -66,7 +67,7 @@ class DeleteCommandTest {
     }
 
     @Test
-    void deleteWorkout_nonExistingWorkout_showsNotFoundMessage() {
+    void deleteWorkout_nonExistingWorkout_showsNotFoundMessage() throws FitLoggerException {
         Storage storage = new Storage();
         WorkoutList workouts = new WorkoutList();
         workouts.addWorkout(new RunWorkout("Deadlift", LocalDate.of(2026, 3, 15), 1.0, 1.0));
@@ -80,7 +81,7 @@ class DeleteCommandTest {
     }
 
     @Test
-    void deleteWorkout_zeroIndex_showsNotFoundMessage() {
+    void deleteWorkout_zeroIndex_showsNotFoundMessage() throws FitLoggerException {
         Storage storage = new Storage();
         WorkoutList workouts = new WorkoutList();
         workouts.addWorkout(new RunWorkout("Deadlift", LocalDate.of(2026, 3, 15), 1.0, 1.0));

@@ -1,5 +1,6 @@
 package fitlogger;
 
+import fitlogger.exception.FitLoggerException;
 import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -9,7 +10,7 @@ import fitlogger.workout.StrengthWorkout;
 public class StrengthWorkoutTest {
 
     @Test
-    public void toFileFormat_validInputs_correctlyFormattedString() {
+    public void toFileFormat_validInputs_correctlyFormattedString() throws FitLoggerException {
         LocalDate testDate = LocalDate.parse("2026-03-13");
         StrengthWorkout workout = new StrengthWorkout("Bench Press", 80.5, 3, 8, testDate);
 
@@ -18,7 +19,7 @@ public class StrengthWorkoutTest {
     }
 
     @Test
-    public void toString_validInputs_correctlyFormattedString() {
+    public void toString_validInputs_correctlyFormattedString() throws FitLoggerException {
         LocalDate testDate = LocalDate.parse("2026-03-13");
         StrengthWorkout workout = new StrengthWorkout("Squat", 100.0, 5, 5, testDate);
 
@@ -27,7 +28,7 @@ public class StrengthWorkoutTest {
     }
 
     @Test
-    public void constructor_storesFieldsCorrectly() {
+    public void constructor_storesFieldsCorrectly() throws FitLoggerException {
         LocalDate date = LocalDate.parse("2026-03-13");
         StrengthWorkout workout = new StrengthWorkout("Deadlift", 120.0, 4, 6, date);
         assertEquals("Deadlift", workout.getDescription());
@@ -38,14 +39,14 @@ public class StrengthWorkoutTest {
     }
 
     @Test
-    public void constructor_zeroWeight_isAllowed() {
+    public void constructor_zeroWeight_isAllowed() throws FitLoggerException {
         // Bodyweight exercises
         StrengthWorkout workout = new StrengthWorkout("Pull-up", 0.0, 3, 10, LocalDate.now());
         assertEquals(0.0, workout.getWeight(), 0.001);
     }
 
     @Test
-    public void toFileFormat_strengthWorkout_savesAndLoadsCorrectly() {
+    public void toFileFormat_strengthWorkout_savesAndLoadsCorrectly() throws FitLoggerException {
         // Round-trip: what we save matches what Storage expects to parse
         LocalDate date = LocalDate.parse("2026-03-13");
         StrengthWorkout workout = new StrengthWorkout("Squat", 100.0, 5, 5, date);

@@ -1,5 +1,7 @@
 package fitlogger;
 
+import fitlogger.exception.FitLoggerException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 
@@ -16,7 +18,8 @@ class WorkoutListTest {
     private RunWorkout run;
     private StrengthWorkout lift;
 
-    public WorkoutListTest() {
+    @BeforeEach
+    public void setUp() throws FitLoggerException {
         list = new WorkoutList();
         run = new RunWorkout("Morning Run", LocalDate.now(), 5.0, 30.0);
         lift = new StrengthWorkout("Bench Press", 60.0, 3, 10, LocalDate.now());

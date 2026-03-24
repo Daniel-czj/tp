@@ -1,5 +1,7 @@
 package fitlogger.workout;
 
+import fitlogger.exception.FitLoggerException;
+
 import java.time.LocalDate;
 
 /**
@@ -18,29 +20,66 @@ public class StrengthWorkout extends Workout {
      * @param sets        The number of sets completed.
      * @param reps        The number of repetitions per set.
      * @param date        The date the workout was completed.
+     * @throws FitLoggerException if description is blank, if weight is not finite
+     *                            and non-negative, or if sets/reps are not positive.
      */
-    public StrengthWorkout(String description, double weight, int sets, int reps, LocalDate date) {
+    public StrengthWorkout(String description, double weight, int sets, int reps, LocalDate date)
+            throws FitLoggerException {
         super(description, date);
-
-        assert weight >= 0 : "Weight should be 0 or greater";
-        assert sets > 0 : "Sets should be at least 1";
-        assert reps > 0 : "Reps should be at least 1";
-
-        this.weight = weight;
-        this.sets = sets;
-        this.reps = reps;
+        setWeight(weight);
+        setSets(sets);
+        setReps(reps);
     }
 
     public double getWeight() {
         return weight;
     }
 
+    /**
+     * Updates the weight in kilograms.
+     *
+     * @param weight New weight value, must be 0 or greater.
+     * @throws FitLoggerException if weight is not finite or negative.
+     */
+    public void setWeight(double weight) throws FitLoggerException {
+        if (!Double.isFinite(weight) || weight < 0) {
+            throw new FitLoggerException("Weight cannot be negative.");
+        }
+        this.weight = weight;
+    }
+
     public int getSets() {
         return sets;
     }
 
+    /**
+     * Updates the number of sets.
+     *
+     * @param sets New sets value, must be greater than 0.
+     * @throws FitLoggerException if sets is not positive.
+     */
+    public void setSets(int sets) throws FitLoggerException {
+        if (sets <= 0) {
+            throw new FitLoggerException("Sets must be a positive integer.");
+        }
+        this.sets = sets;
+    }
+
     public int getReps() {
         return reps;
+    }
+
+    /**
+     * Updates the number of reps.
+     *
+     * @param reps New reps value, must be greater than 0.
+     * @throws FitLoggerException if reps is not positive.
+     */
+    public void setReps(int reps) throws FitLoggerException {
+        if (reps <= 0) {
+            throw new FitLoggerException("Reps must be a positive integer.");
+        }
+        this.reps = reps;
     }
 
     /**

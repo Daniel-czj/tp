@@ -52,6 +52,8 @@ public class Ui {
                 + "    help                                       List available commands\n"
                 + "    add-run <n> d/<dist> t/<mins>              Log a run\n"
                 + "    add-lift <n> w/<kg> s/<sets> r/<reps>      Log a lift workout\n"
+                + "    edit <index> <field>/<value>               "
+                + "Edit field: name/description/weight/sets/reps/distance/duration\n"
                 + "    history                                    View all logged workouts\n"
                 + "    delete <index>                             Delete workout by number\n"
                 + "    delete <name>                              Delete workout by name\n"

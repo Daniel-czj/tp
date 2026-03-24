@@ -3,6 +3,7 @@ package fitlogger.parser;
 import fitlogger.command.AddWorkoutCommand;
 import fitlogger.command.Command;
 import fitlogger.command.DeleteCommand;
+import fitlogger.command.EditCommand;
 import fitlogger.command.ExitCommand;
 import fitlogger.command.HelpCommand;
 import fitlogger.command.ViewHistoryCommand;
@@ -27,6 +28,9 @@ public class Parser {
         switch (commandWord) {
         case "delete":
             return new DeleteCommand(arguments);
+
+        case "edit":
+            return parseEdit(arguments, workouts);
 
         case "exit":
             return new ExitCommand();
@@ -96,6 +100,9 @@ public class Parser {
         if (durationMinutes <= 0) {
             throw new FitLoggerException("Duration must be a positive number.");
         }
+        if (!Double.isFinite(distance) || !Double.isFinite(durationMinutes)) {
+            throw new FitLoggerException("Distance and duration must be realistic positive numbers.");
+        }
 
         Workout run = new RunWorkout(name, LocalDate.now(), distance, durationMinutes);
         return new AddWorkoutCommand(run);
@@ -146,6 +153,9 @@ public class Parser {
         if (weight < 0) {
             throw new FitLoggerException("Weight cannot be negative.");
         }
+        if (!Double.isFinite(weight)) {
+            throw new FitLoggerException("Weight must be a finite number.");
+        }
         if (sets <= 0) {
             throw new FitLoggerException("Sets must be a positive integer.");
         }
@@ -155,6 +165,60 @@ public class Parser {
 
         Workout strength = new StrengthWorkout(name, weight, sets, reps, LocalDate.now());
         return new AddWorkoutCommand(strength);
+    }
+
+    /**
+     * Parses an edit command.
+     *
+     * <p>Expected format: {@code edit <index> <field>/<value>}</p>
+     *
+     * @param arguments Everything after "edit ".
+     * @param workouts  The active workout list.
+     * @return An {@link EditCommand} that updates one workout field.
+     * @throws FitLoggerException if arguments are missing or malformed.
+     */
+    private static Command parseEdit(String arguments, WorkoutList workouts) throws FitLoggerException {
+        if (arguments.isBlank()) {
+            throw new FitLoggerException(
+                    "Missing arguments for edit.\n"
+                            + "Usage: edit <index> <field>/<value>");
+        }
+
+        String[] editParts = splitInput(arguments, " ", 2);
+        if (editParts.length < 2) {
+            throw new FitLoggerException(
+                    "Invalid format for edit.\n"
+                            + "Usage: edit <index> <field>/<value>");
+        }
+
+        int index;
+        try {
+            index = Integer.parseInt(editParts[0].trim());
+        } catch (NumberFormatException exception) {
+            throw new FitLoggerException("Workout index must be a positive integer.");
+        }
+
+        if (index <= 0) {
+            throw new FitLoggerException("Workout index must be a positive integer.");
+        }
+
+        String[] fieldValue = splitInput(editParts[1], "/", 2);
+        if (fieldValue.length < 2) {
+            throw new FitLoggerException(
+                    "Invalid format for edit.\n"
+                            + "Usage: edit <index> <field>/<value>");
+        }
+
+        String fieldName = fieldValue[0].trim();
+        String newValue = fieldValue[1].trim();
+
+        if (fieldName.isBlank() || newValue.isBlank()) {
+            throw new FitLoggerException(
+                    "Invalid format for edit.\n"
+                            + "Usage: edit <index> <field>/<value>");
+        }
+
+        return new EditCommand(index, fieldName, newValue);
     }
 
     /**

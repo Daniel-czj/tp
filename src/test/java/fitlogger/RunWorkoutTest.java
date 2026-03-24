@@ -1,5 +1,6 @@
 package fitlogger;
 
+import fitlogger.exception.FitLoggerException;
 import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 
@@ -14,7 +15,7 @@ import fitlogger.workout.RunWorkout;
 public class RunWorkoutTest {
 
     @Test
-    public void testRunWorkoutInitialization() {
+    public void testRunWorkoutInitialization() throws FitLoggerException {
         LocalDate date = LocalDate.of(2026, 3, 13);
         RunWorkout run = new RunWorkout("Morning Jog", date, 5, 0.20);
 
@@ -26,7 +27,7 @@ public class RunWorkoutTest {
     }
 
     @Test
-    public void testToFileFormat() {
+    public void testToFileFormat() throws FitLoggerException {
         LocalDate date = LocalDate.of(2025, 7, 30);
         RunWorkout run = new RunWorkout("Tempo Run", date, 14, 50.3);
 

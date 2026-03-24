@@ -40,7 +40,7 @@ public class DeleteCommand extends Command {
     public void execute(Storage storage, WorkoutList workouts, Ui ui) {
         if (workoutName == null || workoutName.isBlank()) {
             ui.showMessage("Please specify a workout to delete. "
-                    + "Usage: delete workout <WORKOUT_NAME> or delete <index>");
+                    + "Usage: delete <WORKOUT_NAME> or delete <index>");
             return;
         }
 

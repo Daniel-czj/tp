@@ -1,5 +1,6 @@
 package fitlogger;
 
+import fitlogger.exception.FitLoggerException;
 import fitlogger.storage.Storage;
 import fitlogger.workout.RunWorkout;
 import org.junit.jupiter.api.AfterEach;
@@ -49,7 +50,7 @@ class StorageTest {
     }
 
     @Test
-    void saveData_singleRunWorkoutWorkout_writesCorrectFormat() throws IOException {
+    void saveData_singleRunWorkoutWorkout_writesCorrectFormat() throws IOException, FitLoggerException {
         List<Workout> workouts = new ArrayList<>();
         workouts.add(new RunWorkout("Morning run", LocalDate.of(2024, 3, 15),
                 5.0, 1.0));
@@ -62,7 +63,7 @@ class StorageTest {
     }
 
     @Test
-    void saveData_multipleWorkouts_writesAllLines() throws IOException {
+    void saveData_multipleWorkouts_writesAllLines() throws IOException, FitLoggerException {
         List<Workout> workouts = new ArrayList<>();
         workouts.add(new RunWorkout("Easy jog", LocalDate.of(2024, 3, 10),
                 3.0, 1.0));
@@ -78,7 +79,7 @@ class StorageTest {
     }
 
     @Test
-    void saveData_createsDataDirectory_ifNotExists() {
+    void saveData_createsDataDirectory_ifNotExists() throws FitLoggerException {
         File dir = new File("data");
         // Remove the directory first to simulate a fresh environment
         if (dir.exists()) {
