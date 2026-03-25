@@ -31,8 +31,8 @@ public class FitLogger {
                 if (command.isBlank()) {
                     continue;
                 }
-                Command c = Parser.parse(command, workouts, storage);
-                c.execute(storage, workouts, ui, profile);
+                Command c = Parser.parse(command, workouts);
+                c.execute(storage, workouts, ui);
                 isExit = c.isExit();
             } catch (FitLoggerException e) {
                 ui.showError(e.getMessage());
