@@ -32,7 +32,7 @@ public class FitLogger {
                     continue;
                 }
                 Command c = Parser.parse(command, workouts);
-                c.execute(storage, workouts, ui);
+                c.execute(storage, workouts, ui, profile);
                 isExit = c.isExit();
             } catch (FitLoggerException e) {
                 ui.showError(e.getMessage());
