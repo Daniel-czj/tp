@@ -1,0 +1,44 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+abstract class Workout {
+    # description: String
+    # date: LocalDate
+    + getDescription(): String
+    + getDate(): LocalDate
+    + setDescription(String): void
+    + toFileFormat(): String
+    + toString(): String
+}
+
+class RunWorkout {
+    - distance: double
+    - durationMinutes: double
+    + getDistance(): double
+    + getDurationMinutes(): double
+    + setDistance(double): void
+    + setDurationMinutes(double): void
+}
+
+class StrengthWorkout {
+    - weight: double
+    - sets: int
+    - reps: int
+    + getWeight(): double
+    + getSets(): int
+    + getReps(): int
+    + setWeight(double): void
+    + setSets(int): void
+    + setReps(int): void
+}
+
+class AddWorkoutCommand {
+    - workoutToAdd: Workout
+    + execute(Storage, WorkoutList, Ui): void
+}
+
+Workout <|-- RunWorkout
+Workout <|-- StrengthWorkout
+AddWorkoutCommand --> Workout : workoutToAdd
+@enduml
