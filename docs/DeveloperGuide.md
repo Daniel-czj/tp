@@ -186,6 +186,150 @@ If no target is found, the user sees a not-found message.
 
 ---
 
+### Enhancement 3: `add-lift` Command and `StrengthWorkout`
+
+#### Purpose and user value
+
+The `add-lift` command allows users to log strength-based exercises directly from the CLI.
+It captures four fields: exercise name, weight lifted in kilograms, number of sets, and
+number of repetitions. This separates strength tracking from run tracking, giving users
+a dedicated and validated logging path for gym workouts.
+
+Command format:
+```
+add-lift <name> w/<weightKg> s/<sets> r/<reps>
+```
+
+Examples:
+- `add-lift Bench Press w/80 s/3 r/8`
+- `add-lift Squat w/100 s/5 r/5`
+- `add-lift Pull-up w/0 s/3 r/10`
+
+#### Design overview
+
+This feature follows FitLogger's existing command pipeline:
+
+1. `Parser.parse(...)` identifies the `add-lift` keyword and routes input to
+   `Parser.parseAddLift(...)`.
+2. `parseAddLift(...)` validates the input format, extracts the name and numeric fields,
+   and constructs a `StrengthWorkout` object.
+3. The `StrengthWorkout` is wrapped in an `AddWorkoutCommand` and returned to the main loop.
+4. The main loop calls `Command.execute(storage, workouts, ui)` polymorphically.
+5. `AddWorkoutCommand` adds the workout to `WorkoutList` and prints a confirmation via `Ui`.
+
+Responsibilities remain clearly separated:
+- `Parser` handles syntax validation and tokenization.
+- `AddWorkoutCommand` handles execution logic and list mutation.
+- `StrengthWorkout` enforces domain invariants through setter validation.
+
+#### Class-level design
+
+The class diagram below shows the inheritance structure underpinning this feature.
+
+![Add Lift Class Diagram](images/AddLiftClassDiagram.png)
+
+`StrengthWorkout` extends the abstract `Workout` base class, which also serves as the
+parent for `RunWorkout`. This polymorphic design allows `WorkoutList` to store both types
+under a single `ArrayList<Workout>` without needing separate lists. `AddWorkoutCommand`
+holds a reference to the abstract `Workout` type, meaning the same command class handles
+both `add-lift` and `add-run` — no separate `AddLiftCommand` class is needed.
+
+#### Sequence of events
+
+The sequence diagram below shows how a lift is logged when the user enters
+`add-lift Bench w/80 s/3 r/8`.
+
+![Add Lift Sequence Diagram](images/AddLiftSequenceDiagram.png)
+
+The `StrengthWorkout` object is created inline during parsing and passed directly into
+`AddWorkoutCommand`. The command does not store a reference to `Parser` or `Storage` —
+it receives `storage` and `workouts` only at execution time via `execute(...)`, keeping
+the command stateless until it runs.
+
+#### Component-level behavior
+
+`Parser.parseAddLift(...)` performs the following steps:
+
+1. Check that arguments are not blank; throw `FitLoggerException` with usage hint if so.
+2. Split the argument string on the `w/`, `s/`, and `r/` flag markers using
+   `splitInput(arguments, "w/|s/|r/", 4)`.
+3. Validate that exactly four parts were produced (name + three numeric fields).
+4. Validate the exercise name against reserved storage delimiters (`|` and `/`).
+5. Parse `weight` as a `double`, `sets` and `reps` as `int`; throw on parse failure.
+6. Apply domain constraints: weight >= 0, sets > 0, reps > 0.
+7. Construct and return `new AddWorkoutCommand(new StrengthWorkout(...))`.
+
+`AddWorkoutCommand.execute(...)` performs:
+
+1. Call `workouts.addWorkout(workoutToAdd)`.
+2. Print confirmation via `ui.showMessage(...)` and `ui.printWorkout(...)`.
+
+#### Storage format
+
+A logged lift is persisted to `data/fitlogger.txt` in the following format:
+```
+L | <description> | <date> | <weight> | <sets> | <reps>
+```
+
+For example:
+```
+L | Bench Press | 2026-03-21 | 80.0 | 3 | 8
+```
+
+The `L` type prefix allows `Storage.loadData()` to distinguish lift entries from run
+entries (`R`) when reconstructing the workout list on startup. Each field is pipe-separated
+and positionally indexed, matching the index constants defined in `Storage`.
+
+#### Editing a logged lift
+
+After logging a lift, users can correct any field using `EditCommand`:
+```
+edit <index> weight/<value>
+edit <index> sets/<value>
+edit <index> reps/<value>
+edit <index> name/<value>
+```
+
+`EditCommand` checks that the target workout is a `StrengthWorkout` instance before
+applying weight, sets, or reps edits, and rejects those fields for run workouts. This
+type-checking is done via `instanceof` in the dispatch switch. See Enhancement 1 for
+the full `EditCommand` design.
+
+#### Validation and error handling
+
+| Input error | Error message shown |
+|---|---|
+| Missing arguments | `Missing arguments for add-lift.` + usage hint |
+| Missing flag (e.g. no `r/`) | `Invalid format for add-lift.` + usage hint |
+| Non-numeric weight/sets/reps | `Weight must be a decimal number; sets and reps must be integers.` |
+| Negative weight | `Weight cannot be negative.` |
+| Zero or negative sets | `Sets must be a positive integer.` |
+| Zero or negative reps | `Reps must be a positive integer.` |
+| Name contains `\|` or `/` | `Exercise name must not contain '\|' or '/'` |
+
+#### Design considerations
+
+**Alternative 1 (current choice): Inheritance — `StrengthWorkout extends Workout`**
+
+- Pros: Each subclass stores only the fields it needs. `WorkoutList` holds both types
+  via polymorphism. `AddWorkoutCommand` is reused without modification. Adding a new
+  workout type (e.g. cycling) only requires a new subclass.
+- Cons: Type-specific operations in `EditCommand` require `instanceof` checks, which
+  is a mild violation of the open-closed principle.
+
+**Alternative 2: Single `Workout` class with all fields**
+
+- Pros: Simpler class hierarchy, no casting needed.
+- Cons: Every workout carries unused fields (e.g. a run entry storing `weight = 0`,
+  `sets = 0`, `reps = 0`). This wastes memory and becomes harder to maintain as more
+  workout types are added. Validation also becomes messier since the class cannot
+  enforce which fields are required for which workout type.
+
+Inheritance was chosen because it scales better as the app grows and keeps each class
+focused on a single workout type.
+
+---
+
 ### Notes for team writeups
 
 For each team member section, use this practical structure:
