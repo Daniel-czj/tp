@@ -57,7 +57,7 @@ class ParserTest {
     void addLift_zeroWeight_isAllowed() throws FitLoggerException {
         // Bodyweight exercises log w/0
         Command cmd = Parser.parse("add-lift Pull-up w/0 s/3 r/10", workouts);
-        cmd.execute(storage, workouts, ui);
+        cmd.execute(storage, workouts, ui, profile);
         StrengthWorkout logged = (StrengthWorkout) workouts.getWorkoutAtIndex(0);
         assertEquals(0.0, logged.getWeight(), 0.001);
     }
@@ -186,7 +186,7 @@ class ParserTest {
     @Test
     void addRun_validInput_addsWorkout() throws FitLoggerException {
         Command cmd = Parser.parse("add-run Morning Jog d/5.0 t/25.5", workouts);
-        cmd.execute(storage, workouts, ui);
+        cmd.execute(storage, workouts, ui, profile);
 
         assertEquals(1, workouts.getSize());
         assertTrue(workouts.getWorkoutAtIndex(0) instanceof RunWorkout);
