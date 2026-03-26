@@ -15,12 +15,12 @@ public class ViewProfileCommand extends ProfileCommand {
 
         ui.showMessageNoNewline("Height: ");
         String heightToDisplay = (profile.getHeight() == -1) ?
-                "height not set yet" : profile.getHeight() + "m";
+                "height not set yet" : String.format("%.2f", profile.getHeight()) + "m";
         ui.showMessage(heightToDisplay);
 
         ui.showMessageNoNewline("Weight: ");
         String weightToDisplay = (profile.getWeight() == -1) ?
-                "weight not set yet" : profile.getWeight() + "kg";
+                "weight not set yet" : String.format("%.2f", profile.getWeight()) + "kg";
         ui.showMessage(weightToDisplay);
         ui.showLine();
     }

@@ -305,7 +305,7 @@ public class Parser {
     private static double updateHeightOrWeight(String value, double lowerBound, double upperBound)
             throws FitLoggerException {
         try {
-            double newValue = Float.parseFloat(value);
+            double newValue = Double.parseDouble(value);
             if (newValue < lowerBound || newValue > upperBound) {
                 throw new FitLoggerException("Your Height/Weight is too low/high.\n" +
                         "Please ensure your values are correctly inputted");
