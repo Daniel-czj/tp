@@ -2,7 +2,8 @@
 
 ## Acknowledgements
 
-{list here sources of all reused/adapted ideas, code, documentation, and third-party libraries -- include links to the original source as well}
+{list here sources of all reused/adapted ideas, code, documentation, and third-party libraries -- include 
+links to the original source as well}
 
 ## Design & implementation
 
@@ -64,7 +65,8 @@ The command is intentionally defensive:
 - Unknown fields are rejected (`Unknown editable field: ...`).
 - Non-numeric numeric inputs are rejected.
 - Invalid domain values are rejected via `FitLoggerException`.
-- Name/description edits are validated against reserved storage delimiters (`|` and `/`) to prevent save-file corruption.
+- Name/description edits are validated against reserved storage delimiters (`|` and `/`) to 
+prevent save-file corruption.
 
 #### Data integrity and validation decisions
 
@@ -352,16 +354,20 @@ Examples:
 
 #### Design overview
 
-`RunWorkout` sits at the data layer of FitLogger's architecture. It is constructed by `Parser.parseAddRun(...)` and passed into `AddWorkoutCommand`, following the same pipeline as `StrengthWorkout`:
+`RunWorkout` sits at the data layer of FitLogger's architecture. It is constructed by `Parser.parseAddRun(...)` and 
+passed into `AddWorkoutCommand`, following the same pipeline as `StrengthWorkout`:
 
 1. `Parser.parse(...)` identifies the `add-run` keyword and routes input to `Parser.parseAddRun(...)`.
-2. `parseAddRun(...)` validates the format, extracts the name and numeric fields, and constructs a `RunWorkout` object.
+2. `parseAddRun(...)` validates the format, extracts the name and numeric fields, 
+and constructs a `RunWorkout` object.
 3. The `RunWorkout` is wrapped in an `AddWorkoutCommand` and returned to the main loop.
 4. `AddWorkoutCommand.execute(...)` adds the workout to `WorkoutList` and confirms via `Ui`.
 
 #### Class-level design
 
-`RunWorkout` extends the same abstract `Workout` base class as `StrengthWorkout`. This polymorphic design allows `WorkoutList` to store both types in a single `ArrayList<Workout>`. Domain validation is enforced directly in the setters, keeping invalid state from ever being stored.
+`RunWorkout` extends the same abstract `Workout` base class as `StrengthWorkout`. 
+This polymorphic design allows `WorkoutList` to store both types in a single `ArrayList<Workout>`. 
+Domain validation is enforced directly in the setters, keeping invalid state from ever being stored.
 
 The two run-specific fields and their constraints are:
 
@@ -384,7 +390,8 @@ For example:
 R | Morning Jog | 2026-03-27 | 5.0 | 30.0
 ```
 
-The `R` type prefix allows `Storage.loadData()` to distinguish run entries from lift entries (`L`) when reconstructing the workout list on startup.
+The `R` type prefix allows `Storage.loadData()` to distinguish run entries from lift entries (`L`) when 
+reconstructing the workout list on startup.
 
 #### Validation and error handling
 
@@ -403,15 +410,18 @@ Validation is split between `Parser.parseAddRun(...)` (format-level) and `RunWor
 
 **Alternative 1 (current choice): Setters with validation in `RunWorkout`**
 
-- Pros: Domain rules are enforced at the source. Invalid state cannot exist in a `RunWorkout` object at any point after construction. Setters are reused by `EditCommand` without duplicating validation logic.
+- Pros: Domain rules are enforced at the source. Invalid state cannot exist in a `RunWorkout` 
+object at any point after construction. Setters are reused by `EditCommand` without duplicating validation logic.
 - Cons: Checked exceptions from setters must be handled at every call site (constructor and `EditCommand`).
 
 **Alternative 2: Validate only in `Parser`**
 
 - Pros: Simpler class design with no exceptions thrown from setters.
-- Cons: Validation logic is duplicated or bypassed if `RunWorkout` is ever constructed outside of `Parser`. This breaks encapsulation and makes the domain model unreliable.
+- Cons: Validation logic is duplicated or bypassed if `RunWorkout` is ever constructed outside of `Parser`. 
+This breaks encapsulation and makes the domain model unreliable.
 
-Setter-level validation was chosen to ensure the domain model is always self-consistent, regardless of how it is constructed.
+Setter-level validation was chosen to ensure the domain model is always self-consistent, 
+regardless of how it is constructed.
 
 ---
 
@@ -419,7 +429,9 @@ Setter-level validation was chosen to ensure the domain model is always self-con
 
 #### Purpose and user value
 
-`ViewShoeMileageCommand` lets users see their total running distance across all logged run workouts, along with a count of how many runs they have completed. This gives runners a quick summary of their accumulated shoe mileage — a common metric for knowing when to replace running shoes.
+`ViewShoeMileageCommand` lets users see their total running distance across all logged run workouts, 
+along with a count of how many runs they have completed. This gives runners a quick summary of their 
+accumulated shoe mileage — a common metric for knowing when to replace running shoes.
 
 Command format:
 
@@ -435,7 +447,8 @@ Your total distance ran is 45.30km across 7 runs.
 
 #### Design overview
 
-This command follows FitLogger's standard command pipeline. It holds no user-supplied state and requires no arguments — it is a pure read operation over `WorkoutList`.
+This command follows FitLogger's standard command pipeline. It holds no user-supplied state 
+and requires no arguments — it is a pure read operation over `WorkoutList`.
 
 1. `Parser.parse(...)` identifies the `view-total-mileage` keyword and returns a `ViewShoeMileageCommand`.
 2. The main loop calls `execute(storage, workouts, ui)`.
@@ -458,15 +471,19 @@ The command is deliberately read-only: it does not modify `WorkoutList`, `Storag
 
 **Alternative 1 (current choice): Filter by `instanceof` in the command**
 
-- Pros: Simple and self-contained. No changes needed to `WorkoutList` or `Workout`. Easily extended to show per-workout breakdowns in the future.
+- Pros: Simple and self-contained. No changes needed to `WorkoutList` or `Workout`. 
+Easily extended to show per-workout breakdowns in the future.
 - Cons: The command is aware of a concrete subtype (`RunWorkout`), which is a mild coupling to the class hierarchy.
 
 **Alternative 2: Add a `getTotalRunDistance()` method to `WorkoutList`**
 
 - Pros: Encapsulates the filtering logic inside `WorkoutList`, making the command even simpler.
-- Cons: Adds a run-specific method to `WorkoutList`, which should ideally remain type-agnostic. As more workout types are added, this approach leads to a proliferation of type-specific query methods on `WorkoutList`.
+- Cons: Adds a run-specific method to `WorkoutList`, which should ideally remain type-agnostic. 
+As more workout types are added, this approach leads to a proliferation of 
+type-specific query methods on `WorkoutList`.
 
-The current approach was chosen to keep `WorkoutList` general-purpose while accepting the minor coupling in the command itself.
+The current approach was chosen to keep `WorkoutList` general-purpose while accepting the 
+minor coupling in the command itself.
 
 ---
 
@@ -474,10 +491,11 @@ The current approach was chosen to keep `WorkoutList` general-purpose while acce
 
 #### Purpose and user value
 
-These two commands give users a persistent identity within FitLogger by managing a `UserProfile` that stores their name, height, and weight.
+These two commands give users a persistent identity within FitLogger by managing a `UserProfile` 
+that stores their name, height, and weight.
 
 - `ViewProfileCommand` displays the current profile, with friendly placeholder text for any fields not yet set.
-- `UpdateProfileCommand` allows users to update one or more profile fields in a single command.
+- `UpdateProfileCommand` allows users to update a profile field in a single command.
 
 Command formats:
 
@@ -490,13 +508,17 @@ profile set weight <kg>
 
 #### Design overview
 
-Both commands extend `ProfileCommand`, which itself extends the abstract `Command` base class. This intermediate layer groups profile-related commands without adding any behaviour — it serves as a marker for future extensibility (for example, a `DeleteProfileCommand`).
+Both commands extend `ProfileCommand`, which itself extends the abstract `Command` base class. 
+This intermediate layer groups profile-related commands without adding any behaviour — 
+it serves as a marker for future extensibility (for example, a `DeleteProfileCommand`).
 
 The execution flow is:
 
 1. `Parser.parse(...)` identifies the `profile` keyword and routes to sub-parsers for `view` or `set`.
 2. For `profile view`, a `ViewProfileCommand` is returned with no arguments.
-3. For `profile set`, `Parser` extracts whichever fields are present and constructs an `UpdateProfileCommand` with the parsed values. Fields not present in the input are passed as `null` (name) or `-1` (height/weight) to signal "no change".
+3. For `profile set`, `Parser` extracts whichever fields are present and constructs an `UpdateProfileCommand` 
+with the parsed values. Fields not present in the input are passed as `null` (name) or `-1` (height/weight)
+to signal "no change".
 4. The main loop calls `execute(storage, workouts, ui, profile)` polymorphically.
 
 #### Component-level behavior
@@ -505,9 +527,11 @@ The execution flow is:
 
 1. Call `ui.showLine()` to open the display block.
 2. Display name — if `profile.getName()` is `null`, show `"name not set yet"`.
-3. Display height — if `profile.getHeight()` is `-1`, show `"height not set yet"`; otherwise format to 2 decimal places with the `m` suffix.
-4. Display weight — if `profile.getWeight()` is `-1`, show `"weight not set yet"`; otherwise format to 2 decimal places with the `kg` suffix.
-5. Call `ui.showLine()` to close the display block.
+3. Display height — if `profile.getHeight()` is `-1`, show `"height not set yet"`; 
+otherwise format to 2 decimal places with the `m` suffix.
+4. Display weight — if `profile.getWeight()` is `-1`, show `"weight not set yet"`; 
+5. otherwise format to 2 decimal places with the `kg` suffix.
+Call `ui.showLine()` to close the display block.
 
 **`UpdateProfileCommand.execute(...)`**
 
@@ -515,14 +539,16 @@ The execution flow is:
 2. If `newHeight != -1`, call `profile.setHeight(newHeight)` and confirm via `Ui`.
 3. If `newWeight != -1`, call `profile.setWeight(newWeight)` and confirm via `Ui`.
 
-Only fields explicitly supplied by the user are updated. Fields passed as sentinel values (`null` / `-1`) are silently skipped, preserving existing profile data.
+Only fields explicitly supplied by the user are updated. Fields passed as sentinel values 
+(`null` / `-1`) are silently skipped, preserving existing profile data.
 
 #### Sentinel value design decision
 
 `-1` is used as a sentinel for unset numeric profile fields (height and weight) because:
 
 - It is outside any valid physical range, so it cannot be confused with a real value.
-- The same sentinel is used consistently in both `UserProfile` storage and `UpdateProfileCommand` argument passing, keeping the contract clear.
+- The same sentinel is used consistently in both `UserProfile` storage and `UpdateProfileCommand` 
+argument passing, keeping the contract clear.
 
 An assertion in `UpdateProfileCommand`'s constructor enforces this:
 
@@ -537,15 +563,18 @@ assert newWeight == -1 || newWeight >= 0 : "Weight is invalid";
 
 **Alternative 1 (current choice): Separate `ViewProfileCommand` and `UpdateProfileCommand`**
 
-- Pros: Each command has a single responsibility. `ViewProfileCommand` is always a safe read-only operation. Adding a new profile sub-command in the future (e.g. `profile reset`) only requires a new subclass.
+- Pros: Each command has a single responsibility. `ViewProfileCommand` is always a safe read-only 
+operation. Adding a new profile sub-command in the future (e.g. `profile reset`) only requires a new subclass.
 - Cons: Slightly more classes to maintain.
 
 **Alternative 2: Single `ProfileCommand` that handles both `view` and `set`**
 
 - Pros: Fewer classes.
-- Cons: The command must carry a mode flag and branch internally, mixing read and write logic in one class. This reduces clarity and makes testing harder.
+- Cons: The command must carry a mode flag and branch internally, mixing read and write logic in 
+one class. This reduces clarity and makes testing harder.
 
-Separate commands were chosen to preserve single responsibility and keep each command easy to test and extend independently.
+Separate commands were chosen to preserve single responsibility and keep each command easy to 
+test and extend independently.
 
 ---
 
@@ -553,21 +582,33 @@ Separate commands were chosen to preserve single responsibility and keep each co
 
 ### Command Architecture
 
-The execution logic of **FitLogger** is centered around the **Command Pattern**. This architectural choice decouples the object that invokes an operation (the main execution loop in `FitLogger`) from the objects that actually perform the action.
+The execution logic of **FitLogger** is centered around the **Command Pattern**. This architectural 
+choice decouples the object that invokes an operation (the main execution loop in `FitLogger`) from the 
+objects that actually perform the action.
 
 #### Design Rationale
 By encapsulating a request as an object, the system achieves several key design goals:
-* **Separation of Concerns:** The `FitLogger` main class does not need to know the internal logic of specific features; it only needs to call a uniform `execute()` method.
-* **Extensibility:** Adding new features (e.g., `edit-run`) only requires creating a new subclass of `Command` and updating the `Parser`, leaving the core execution loop untouched.
-* **Uniform Error Handling:** Since all commands follow the same interface, exceptions thrown during execution (like `FitLoggerException`) can be caught and handled globally by the main loop.
+* **Separation of Concerns:** The `FitLogger` main class does not need to know the 
+internal logic of specific features; it only needs to call a uniform `execute()` method.
+* **Extensibility:** Adding new features (e.g., `edit-run`) only requires creating a new 
+subclass of `Command` and updating the `Parser`, leaving the core execution loop untouched.
+* **Uniform Error Handling:** Since all commands follow the same interface, exceptions thrown 
+during execution (like `FitLoggerException`) can be caught and handled globally by the main loop.
 
 #### Components and Interaction
 The Command architecture consists of three primary elements:
-1.  **`Command` (Abstract Class):** The base template for all actions. It defines the `execute(Storage, WorkoutList, Ui)` method, ensuring every command has access to the necessary system components.
-2.  **Concrete Implementations:** Subclasses like `AddWorkoutCommand` and `DeleteCommand` store specific user-inputted states—such as a `Workout` object or a name `String`—internally until execution.
-3.  **Polymorphic Execution:** The `FitLogger#run()` method maintains a "Parse-then-Execute" loop. It treats all returned objects as the abstract `Command` type, invoking `isExit()` to determine if the application should terminate.
+1.  **`Command` (Abstract Class):** The base template for all actions. It defines the 
+`execute(Storage, WorkoutList, Ui)` method, ensuring every command has access to the necessary system components.
+2.  **Concrete Implementations:** Subclasses like `AddWorkoutCommand` 
+and `DeleteCommand` store specific user-inputted states—such as a `Workout` 
+object or a name `String`—internally until execution.
+3.  **Polymorphic Execution:** The `FitLogger#run()` method maintains a 
+"Parse-then-Execute" loop. It treats all returned objects as the abstract `Command` 
+type, invoking `isExit()` to determine if the application should terminate.
 
-Unlike "ready-to-run" implementations, FitLogger's commands are **stateless regarding the system** but **stateful regarding user input**. They are instantiated with arguments by the `Parser` but only gain access to application data (`WorkoutList`) and persistence (`Storage`) at the moment of execution.
+Unlike "ready-to-run" implementations, FitLogger's commands are **stateless regarding the system** 
+but **stateful regarding user input**. They are instantiated with arguments by the `Parser` but only gain 
+access to application data (`WorkoutList`) and persistence (`Storage`) at the moment of execution.
 
 ![Command Class Diagram](../out/command-design/command-design.png)
 
@@ -575,14 +616,18 @@ Unlike "ready-to-run" implementations, FitLogger's commands are **stateless rega
 
 ### Parser Implementation
 
-The `Parser` component is a static utility class responsible for transforming raw user input strings into the executable `Command` objects described above.
+The `Parser` component is a static utility class responsible for transforming raw user input strings into the 
+executable `Command` objects described above.
 
 #### Execution Logic
 The parsing logic is centralized in the `Parser#parse()` method, following a two-stage process:
-1.  **Tokenization:** The input string is split into a `commandWord` and `arguments` using the `splitInput` helper method.
-2.  **Command Dispatch:** A `switch` block routes the `commandWord` to the appropriate command constructor (e.g., `DeleteCommand`, `ExitCommand`) or specialized sub-parser methods (e.g., `parseAddRun`, `parseAddLift`).
+1.  **Tokenization:** The input string is split into a `commandWord` and `arguments` using the `splitInput` 
+helper method.
+**Command Dispatch:** A `switch` block routes the `commandWord` to the appropriate command constructor 
+2. (e.g., `DeleteCommand`, `ExitCommand`) or specialized sub-parser methods (e.g., `parseAddRun`, `parseAddLift`).
 
-The following sequence diagram illustrates the internal logic of the `Parser` when handling `add-run` or `delete` commands:
+The following sequence diagram illustrates the internal logic of the `Parser` when handling `add-run` or 
+`delete` commands:
 
 ![Parser Sequence Diagram](../out/parser-design/parser-design.png)
 
@@ -595,10 +640,13 @@ The following sequence diagram illustrates the internal logic of the `Parser` wh
     * **Pros:** Simple to use across the application without maintaining state; lightweight for the current scope.
     * **Cons:** Harder to "mock" during unit testing compared to an instance-based approach.
 * **Alternative Considered:** Instance-based Parser with Dependency Injection.
-    * **Reason for Rejection:** Given the current requirements of FitLogger, a static parser is sufficient and avoids unnecessary complexity.
+    * **Reason for Rejection:** Given the current requirements of FitLogger, a static parser is sufficient 
+  and avoids unnecessary complexity.
 
 **Aspect: Data Validation**
-* The parser acts as a gatekeeper for data integrity. It ensures that user-inputted text (like workout names) does not contain reserved characters (`|` or `/`) used by the `Storage` component. This prevents potential file corruption during save/load operations.
+* The parser acts as a gatekeeper for data integrity. It ensures that user-inputted text (like workout names) 
+does not contain reserved characters (`|` or `/`) used by the `Storage` component. This prevents potential 
+file corruption during save/load operations.
 
 ## Product scope
 ### Target user profile
