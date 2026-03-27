@@ -521,6 +521,21 @@ with the parsed values. Fields not present in the input are passed as `null` (na
 to signal "no change".
 4. The main loop calls `execute(storage, workouts, ui, profile)` polymorphically.
 
+#### Class-level design
+
+The class diagram below shows the inheritance structure underpinning this feature.
+
+![Profile Command Diagram](images/ProfileCommandDiagram.png)
+
+Both `ViewProfileCommand` and `UpdateProfileCommand` inherit from the abstract `ProfileCommand`, 
+which in turn extends the base `Command` class. This tiered inheritance allows the application to 
+categorize profile-specific actions under a common parent.
+
+The `UserProfile` class acts as the data store for the user's physical attributes. 
+During execution, the `ProfileCommand` interacts directly with the `UserProfile` object passed 
+into its `execute` method. This design ensures that profile data is decoupled from the workout list, 
+maintaining a clean separation of concerns within the application state.
+
 #### Component-level behavior
 
 **`ViewProfileCommand.execute(...)`**
