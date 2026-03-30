@@ -59,6 +59,7 @@ public class Ui {
                 + "    edit <index> <field>/<value>               "
                 + "Edit field: name/description/weight/sets/reps/distance/duration\n"
                 + "    view-database                              View exercise shortcuts and their IDs\n"
+                + "    add-shortcut <lift/run> <ID> <name>        Add a custom exercise shortcut\n"
                 + "    view-total-mileage                         View total distance ran across all run workouts\n"
                 + "    history                                    View all logged workouts\n"
                 + "    delete <index>                             Delete workout by number\n"
