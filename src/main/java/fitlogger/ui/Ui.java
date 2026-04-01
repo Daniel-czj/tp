@@ -107,4 +107,22 @@ public class Ui {
         showMessage("  Reps   : " + lift.getReps());
         showLine();
     }
+
+    public void showProfile(String name, double height, double weight) {
+        showLine();
+        showMessageNoNewline("Name: ");
+        String nameToDisplay = (name == null) ? "name not set yet" : name;
+        showMessage(nameToDisplay);
+
+        showMessageNoNewline("Height: ");
+        String heightToDisplay = (height == -1) ?
+                "height not set yet" : String.format("%.2f", height) + "m";
+        showMessage(heightToDisplay);
+
+        showMessageNoNewline("Weight: ");
+        String weightToDisplay = (weight == -1) ?
+                "weight not set yet" : String.format("%.2f", weight) + "kg";
+        showMessage(weightToDisplay);
+        showLine();
+    }
 }
