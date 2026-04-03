@@ -1,5 +1,6 @@
 package fitlogger.ui;
 
+import fitlogger.musclegroup.MuscleGroup;
 import fitlogger.workout.StrengthWorkout;
 import fitlogger.workout.Workout;
 import fitlogger.exercisedictionary.ExerciseDictionary;
@@ -104,6 +105,19 @@ public class Ui {
             showMessage("  [" + entry.getKey() + "] -> " + entry.getValue());
         }
         showLine();
+    }
+
+    public void showMuscleGroups() {
+        showMessage("Here are all available muscle groups: ");
+        MuscleGroup[] groups = MuscleGroup.values();
+        for (int i = 0; i < groups.length; i++) {
+            showMessageNoNewline(groups[i].displayName());
+            if (i != groups.length - 1) {
+                //don't show comma on the last element
+                showMessageNoNewline(", ");
+            }
+        }
+        showMessage("");
     }
 
     /**

@@ -13,6 +13,7 @@ import fitlogger.command.UpdateProfileCommand;
 import fitlogger.command.ViewDatabaseCommand;
 import fitlogger.command.ViewHistoryCommand;
 import fitlogger.command.ViewLastLiftCommand;
+import fitlogger.command.ViewMuscleGroupCommand;
 import fitlogger.command.ViewProfileCommand;
 import fitlogger.command.ViewShoeMileageCommand;
 import fitlogger.command.AddShortcutCommand;
@@ -48,6 +49,9 @@ public class Parser {
 
         case "train":
             return parseTrainMuscle(arguments, dictionary);
+
+        case "muscle-groups":
+            return new ViewMuscleGroupCommand();
 
         case "profile":
             return parseProfile(arguments);
