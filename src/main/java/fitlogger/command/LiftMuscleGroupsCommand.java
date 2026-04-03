@@ -14,7 +14,7 @@ public class LiftMuscleGroupsCommand extends Command {
     private final ExerciseDictionary dictionary;
 
     public LiftMuscleGroupsCommand(int id, ExerciseDictionary dictionary) {
-        assert id >= 0 : "id is negative, possible error in ExerciseDictionary";
+        assert id > 0 : "id is not valid, possible error in ExerciseDictionary";
         this.id = id;
         this.dictionary = dictionary;
     }

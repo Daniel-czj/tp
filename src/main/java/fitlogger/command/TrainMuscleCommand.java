@@ -20,7 +20,7 @@ public class TrainMuscleCommand extends Command {
 
     @Override
     public void execute(Storage storage, WorkoutList workouts, Ui ui, UserProfile profile) {
-        ui.showMessage("Exercises targting: " + targetMuscle.displayName());
+        ui.showMessage("Exercises targeting: " + targetMuscle.displayName());
         boolean exerciseFound = false;
         for (Map.Entry<Integer, String> entry : dictionary.getLiftShortcuts().entrySet()) {
             if (dictionary.getMusclesFor(entry.getKey()).contains(targetMuscle)) {

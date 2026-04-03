@@ -300,7 +300,7 @@ public class Storage {
             this.dictionary.addRunShortcut(id, name);
         }
 
-        if (fields.length == 5) {
+        if (fields.length == 5 && type.equals("lift")) {
             //muscle group tags present
             String muscleField = fields[4].trim();
             if (muscleField.isEmpty()) {
