@@ -1,6 +1,6 @@
-package fitlogger.musclegroups;
+package fitlogger.musclegroup;
 
-public enum MuscleGroups {
+public enum MuscleGroup {
     DELTS,
     PECS,
     FOREARMS,
