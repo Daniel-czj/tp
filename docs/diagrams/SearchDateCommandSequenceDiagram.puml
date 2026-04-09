@@ -27,10 +27,14 @@ loop for each workout in list
 	Cmd -> Cmd : add match to matchingWorkouts (if equal)
 end
 
-Cmd -> Ui : showMessage("Workouts on 2026-03-15:")
-Cmd -> Ui : showLine()
-Cmd -> Ui : showWorkoutList(matchingWorkouts)
-Cmd -> Ui : showLine()
+alt matchingWorkouts is empty
+	Cmd -> Ui : showWorkoutList(matchingWorkouts)
+else matches found
+	Cmd -> Ui : showMessage("Workouts on 2026-03-15:")
+	Cmd -> Ui : showLine()
+	Cmd -> Ui : showWorkoutList(matchingWorkouts)
+	Cmd -> Ui : showLine()
+end
 
 Cmd --> Main
 deactivate Cmd

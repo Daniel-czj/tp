@@ -6,7 +6,7 @@ abstract class Command {
 }
 
 class DeleteCommand {
-	-workoutIndex : String
+	-oneBasedIndex : int
 	+execute(storage, workouts, ui, profile)
 }
 

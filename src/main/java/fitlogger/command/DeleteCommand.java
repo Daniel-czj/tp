@@ -13,24 +13,24 @@ import fitlogger.workoutlist.WorkoutList;
  * </p>
  */
 public class DeleteCommand extends Command {
-    /** The workout index provided by the user for deletion. */
-    private final String workoutIndex;
+    /** The one-based workout index provided by the user for deletion. */
+    private final int oneBasedIndex;
 
     /**
      * Creates a delete command with the target workout index.
      *
-     * @param workoutIndex The workout index to delete.
+     * @param oneBasedIndex The one-based workout index to delete.
      */
-    public DeleteCommand(String workoutIndex) {
-        this.workoutIndex = workoutIndex;
+    public DeleteCommand(int oneBasedIndex) {
+        this.oneBasedIndex = oneBasedIndex;
     }
 
     /**
      * Executes the delete operation and prints feedback to the user.
      *
      * <p>
-      * If the index is missing, non-numeric, non-positive, or out of range, a validation
-      * message is shown and no state is changed.
+      * If the parsed index is out of range, a validation message is shown and no state is
+      * changed.
      * </p>
      *
       * @param storage Storage component used to persist workouts and profile.
@@ -40,26 +40,6 @@ public class DeleteCommand extends Command {
      */
     @Override
     public void execute(Storage storage, WorkoutList workouts, Ui ui, UserProfile profile) {
-        if (workoutIndex == null || workoutIndex.isBlank()) {
-            ui.showMessage("Please specify a workout index to delete. Usage: delete <index>");
-            return;
-        }
-
-        String normalizedIndex = workoutIndex.trim();
-        final int oneBasedIndex;
-
-        try {
-            oneBasedIndex = Integer.parseInt(normalizedIndex);
-        } catch (NumberFormatException exception) {
-            ui.showMessage("Workout index must be a positive integer.");
-            return;
-        }
-
-        if (oneBasedIndex <= 0) {
-            ui.showMessage("Invalid workout index: " + oneBasedIndex);
-            return;
-        }
-
         int zeroBasedIndex = oneBasedIndex - 1;
         if (zeroBasedIndex < 0 || zeroBasedIndex >= workouts.getSize()) {
             ui.showMessage("Invalid workout index: " + oneBasedIndex);

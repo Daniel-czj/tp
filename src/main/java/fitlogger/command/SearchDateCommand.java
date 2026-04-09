@@ -43,6 +43,11 @@ public class SearchDateCommand extends Command {
             }
         }
 
+        if (matchingWorkouts.isEmpty()) {
+            ui.showWorkoutList(matchingWorkouts);
+            return;
+        }
+
         ui.showMessage("Workouts on " + targetDate + ":");
         ui.showLine();
         ui.showWorkoutList(matchingWorkouts);

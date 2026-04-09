@@ -13,7 +13,7 @@ import fitlogger.workoutlist.WorkoutList;
 /**
  * Edits a single field of an existing workout identified by one-based index.
  *
- * <p>Supported fields are name/description for all workouts, weight/sets/reps
+ * <p>Supported fields are name for all workouts, weight/sets/reps
  * for strength workouts, and distance/duration for run workouts.
  */
 public class EditCommand extends Command {

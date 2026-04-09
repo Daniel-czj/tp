@@ -14,15 +14,13 @@ activate Main
 
 Main -> Parser : parse("delete 3", workouts, dictionary)
 activate Parser
-Parser --> Main : new DeleteCommand("3")
+Parser --> Main : new DeleteCommand(3)
 deactivate Parser
 
 Main -> Cmd : execute(storage, workouts, ui, profile)
 activate Cmd
 
-alt blank or non-numeric or non-positive index
-  Cmd -> Ui : showMessage("Invalid index / usage message")
-else valid index within range
+alt valid index within range
   Cmd -> Workouts : getSize()
   Cmd -> Workouts : getWorkoutAtIndex(2)
   note right of Cmd
