@@ -237,7 +237,7 @@ Expected error:
 ---
 ### View workout calendar: `view-calendar`
 
-Displays an ASCII calendar for a specific month, highlighting the days you successfully logged a workout.
+Displays an text-based calendar for a specific month, highlighting the days you successfully logged a workout.
 
 Format: `view-calendar YYYY-MM>`
 
