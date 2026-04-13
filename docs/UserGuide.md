@@ -79,6 +79,7 @@ Format: `add-lift <NAME_OR_ID> w/<weightKg> s/<sets> r/<reps>`
 - The flags `w/`, `s/`, `r/` must appear in that order.
 - `weight` must use normal decimal notation such as `80` or `80.5`; scientific notation such as `8e1` is rejected.
 - `sets` and `reps` must be whole numbers from 1 to 1,000,000.
+- **Warning:** The exercise name cannot contain the pipe `|` or forward slash `/` characters, as these are reserved for saving your data.
 
 Examples:
 - `add-lift Bench Press w/80 s/3 r/8`

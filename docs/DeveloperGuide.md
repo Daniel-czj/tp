@@ -1262,7 +1262,9 @@ FitLogger provides a blazingly fast, distraction-free environment to log mixed-m
 |Version| As a ... | I want to ... | So that I can ...|
 |--------|----------|---------------|------------------|
 |v1.0|new user|see usage instructions|refer to them when I forget how to use the application|
-|v2.0|user|find a to-do item by name|locate a to-do without having to go through the entire list|
+|v2.0|hybrid athlete|log my strength workouts with weight, sets, and reps|track my lifting progress over time|
+|v2.0|runner|log my runs with distance and duration|track my cardiovascular training|
+|v2.0|power user|create custom exercise shortcuts|log my daily workouts much faster without typing full names|
 
 ## Non-Functional Requirements
 
@@ -1277,4 +1279,24 @@ FitLogger provides a blazingly fast, distraction-free environment to log mixed-m
 
 ## Instructions for manual testing
 
-{Give instructions on how to do a manual product testing e.g., how to load sample data to be used for testing}
+### Exercise Shortcut Database and Persistence
+
+**1. Viewing the default database**
+* Prerequisites: Ensure you have a fresh installation with no existing `data/fitlogger.txt` file.
+* Test case: `view-database`
+* Expected: The UI displays the default strength shortcuts and run shortcuts in numerical order.
+
+**2. Adding a custom shortcut**
+* Test case: `add-shortcut lift 99 Muscle Up`
+* Expected: Success message confirming `[99] -> Muscle Up` was added.
+* Follow-up: Run `view-database` again to visually confirm the entry appears.
+
+**3. Utilizing the shortcut in logging**
+* Test case: `add-lift 99 w/0 s/3 r/5`
+* Expected: The workout is successfully logged. The confirmation message should display the translated name (`Muscle Up`), NOT the number `99`.
+
+**4. Testing Persistence (Crucial)**
+* Action: Type `exit` to close FitLogger.
+* Action: Relaunch FitLogger.
+* Test case: `view-database`
+* Expected: Your custom `Muscle Up` shortcut should still be in the database.
