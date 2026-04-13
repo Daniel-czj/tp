@@ -89,7 +89,9 @@ public class RunWorkout extends Workout {
 
     @Override
     public String toString() {
+        // Forces 2 decimal places, preventing scientific notation like 1.0E-6
         return "[Run] " + super.toString()
-                + " (Distance: " + distance + "km, Duration: " + durationMinutes + " mins)";
+                + " (Distance: " + String.format("%.2f", distance) + "km, Duration: "
+                + String.format("%.2f", durationMinutes) + " mins)";
     }
 }

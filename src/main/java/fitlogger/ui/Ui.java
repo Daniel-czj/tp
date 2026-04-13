@@ -113,13 +113,9 @@ public class Ui {
             int id = entry.getKey();
             showMessageNoNewline("  [" + id + "] -> " + entry.getValue());
 
-            Set<MuscleGroup> muscles = dictionary.getMusclesFor(id);
             if (isDetailed) {
-                if (muscles.isEmpty()) {
-                    showMessage(" (Muscles: no muscles currently tagged)");
-                } else {
-                    showMessage(" (Muscles: " + muscles + ")");
-                }
+                Set<MuscleGroup> muscles = dictionary.getMusclesFor(id);
+                showMessage(" (Muscles: " + formatMuscleSet(muscles) + ")");
             } else {
                 showMessage("");
             }
@@ -143,6 +139,25 @@ public class Ui {
             }
         }
         showMessage("");
+    }
+
+    /**
+     * Formats a set of muscle groups into a user-friendly comma-separated string.
+     * Example: [QUADS, GLUTES] -> "quads, glutes"
+     */
+    public String formatMuscleSet(Set<MuscleGroup> muscles) {
+        if (muscles.isEmpty()) {
+            return "no muscles currently tagged";
+        }
+        StringBuilder sb = new StringBuilder();
+        int count = 0;
+        for (MuscleGroup muscle : muscles) {
+            sb.append(muscle.displayName());
+            if (++count < muscles.size()) {
+                sb.append(", ");
+            }
+        }
+        return sb.toString();
     }
 
     /**

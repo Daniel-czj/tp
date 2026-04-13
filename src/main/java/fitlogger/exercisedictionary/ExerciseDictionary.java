@@ -63,7 +63,13 @@ public class ExerciseDictionary {
     }
 
     public void addLiftShortcut(int id, String name) {
+        logger.log(Level.INFO, "Adding/Overwriting lift shortcut: [" + id + "] " + name);
         assert id > 0 && name != null && !name.trim().isEmpty();
+        // Remove old muscle tags associated with this ID before overwriting
+        if (liftDictionary.containsKey(id)) {
+            logger.log(Level.INFO, "Clearing old muscle tags for ID " + id + " due to overwrite.");
+            liftMuscleGroups.remove(id);
+        }
         liftDictionary.put(id, name);
     }
 

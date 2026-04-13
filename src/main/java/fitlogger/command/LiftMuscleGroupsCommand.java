@@ -46,7 +46,7 @@ public class LiftMuscleGroupsCommand extends Command {
         if (muscles.isEmpty()) {
             ui.showMessage("No muscle groups tagged for " + exerciseName + " (ID: " + id + ").");
         } else {
-            ui.showMessage("Muscle groups for " + exerciseName + ": " + muscles);
+            ui.showMessage("Muscle groups for " + exerciseName + " (ID: " + id + "): " + ui.formatMuscleSet(muscles));
         }
     }
 }
