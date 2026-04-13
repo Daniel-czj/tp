@@ -2,6 +2,7 @@ package fitlogger.parser;
 
 
 import fitlogger.command.AddWorkoutCommand;
+import fitlogger.command.ClearProfileCommand;
 import fitlogger.command.Command;
 import fitlogger.command.DeleteCommand;
 import fitlogger.command.EditCommand;
@@ -86,10 +87,8 @@ public class Parser {
         case "add-lift":
             return parseAddLift(arguments, workouts, dictionary);
 
-        case "list":
-            // fallthrough intentional — same behaviour as history
         case "history":
-            return new ViewHistoryCommand();
+            return parseViewHistory(arguments);
 
         case "help":
             return new HelpCommand();
@@ -514,6 +513,9 @@ public class Parser {
             case "view":
                 // ignores all entries after it
                 return new ViewProfileCommand();
+            case "clear":
+                //ignores all entries after it
+                return new ClearProfileCommand();
             case "set":
                 if (info.length < 2) {
                     throw new FitLoggerException("Field not provided. \n"
@@ -549,14 +551,19 @@ public class Parser {
 
     private static double updateHeightOrWeight(String value, double lowerBound, double upperBound)
             throws FitLoggerException {
-        if (!isPlainDecimalNumber(value)) {
-            throw new FitLoggerException("Please provide a standard decimal number (no scientific notation).");
+        try {
+            double newValue = Double.parseDouble(value);
+            if (!Double.isFinite(newValue)) {
+                throw new FitLoggerException("Invalid input. Please provide a real number.");
+            }
+            if (newValue < lowerBound || newValue > upperBound) {
+                throw new FitLoggerException("Your Height/Weight is unrealistically low/high.\n"
+                        + "Please ensure your values are correct, height in m and weight in Kg");
+            }
+            return newValue;
+        } catch (NumberFormatException e) {
+            throw new FitLoggerException("Please provide a valid number for height/weight");
         }
-        double newValue = Double.parseDouble(value);
-        if (newValue < lowerBound || newValue > upperBound) {
-            throw new FitLoggerException("Your Height/Weight is unrealistically low/high.");
-        }
-        return newValue;
     }
 
     /**
@@ -606,8 +613,9 @@ public class Parser {
             }
             return parsedValue;
         } catch (NumberFormatException exception) {
-            if (value.trim().matches("\\+?\\d+")) {
-                throw new FitLoggerException(fieldName + " must not exceed " + MAX_INTEGER_INPUT + ".");
+            if (value.trim().matches("\\d+")) {
+                throw new FitLoggerException(fieldName + " must not exceed "
+                        + MAX_INTEGER_INPUT + ".");
             }
             throw new FitLoggerException(fieldName + " must be a positive integer.");
         }
@@ -624,6 +632,23 @@ public class Parser {
         } catch (DateTimeParseException e) {
             throw new FitLoggerException(
                     "Invalid calendar format. Use YYYY-MM (e.g., view-calendar 2026-04)");
+        }
+    }
+
+    private static Command parseViewHistory(String arguments) throws FitLoggerException {
+        if (arguments.isBlank()) {
+            return new ViewHistoryCommand();
+        }
+
+        try {
+            int count = Integer.parseInt(arguments.trim());
+            if (count <= 0) {
+                throw new FitLoggerException("History count must be a positive integer.");
+            }
+            return new ViewHistoryCommand(count);
+        } catch (NumberFormatException e) {
+            throw new FitLoggerException("Invalid format. Usage: history [number]\n" +
+                    "Number should be positive and below " + Parser.MAX_INTEGER_INPUT + ".");
         }
     }
 }
