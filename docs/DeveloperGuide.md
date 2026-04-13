@@ -1262,7 +1262,11 @@ FitLogger provides a blazingly fast, distraction-free environment to log mixed-m
 |Version| As a ... | I want to ... | So that I can ...|
 |--------|----------|---------------|------------------|
 |v1.0|new user|see usage instructions|refer to them when I forget how to use the application|
-|v2.0|user|find a to-do item by name|locate a to-do without having to go through the entire list|
+|v1.0|user|delete an unwanted workout by index|remove duplicate or accidental entries from my history|
+|v1.0|user|exit the application safely|save my workouts before the program closes|
+|v2.0|user|edit a wrongly entered workout field|correct logging mistakes without deleting and recreating the workout|
+|v2.0|user|search workouts by date|review what I trained on a specific day|
+|v2.0|user|receive clear errors for malformed commands|understand what went wrong and how to correct my input|
 
 ## Non-Functional Requirements
 
@@ -1277,4 +1281,119 @@ FitLogger provides a blazingly fast, distraction-free environment to log mixed-m
 
 ## Instructions for manual testing
 
-{Give instructions on how to do a manual product testing e.g., how to load sample data to be used for testing}
+These instructions assume the tester has launched FitLogger using `java -jar fitlogger.jar`.
+Start with a clean or disposable save file when testing destructive commands such as `delete`.
+
+### Preparing sample data
+
+1. Enter `add-run Easy Run d/3 t/30`.
+   Expected:
+   `Got it. I've added this workout:`
+   followed by `[Run] Easy Run (Date: <date>) (Distance: 3.0km, Duration: 30.0 mins)`.
+
+2. Enter `add-lift Bench Press w/80 s/3 r/8`.
+   Expected:
+   `Got it. I've added this workout:`
+   followed by `[Lift] Bench Press (Date: <date>) (80.0kg, 3 sets of 8 reps)`.
+
+3. Enter `history`.
+   Expected: two workouts are shown in this order:
+   1. `[Run] Easy Run ...`
+   2. `[Lift] Bench Press ...`
+
+### Testing `edit`
+
+1. Test a valid run edit.
+   - Command: `edit 1 distance/5`
+   - Expected: `Updated workout 1: [Run] Easy Run (Date: <date>) (Distance: 5.0km, Duration: 30.0 mins)`
+
+2. Test a valid lift edit.
+   - Command: `edit 2 reps/10`
+   - Expected: `Updated workout 2: [Lift] Bench Press (Date: <date>) (80.0kg, 3 sets of 10 reps)`
+
+3. Test a field that is not valid for the workout type.
+   - Command: `edit 1 weight/90`
+   - Expected: `Field 'weight' is only valid for lift workouts.`
+
+4. Test shorthand rejection.
+   - Command: `edit 1 d/6`
+   - Expected: `Unknown editable field: d`
+
+5. Test invalid decimal notation.
+   - Command: `edit 1 distance/8e1`
+   - Expected: `Invalid distance value: 8e1`
+
+6. Test integer bounds.
+   - Command: `edit 2 sets/1000001`
+   - Expected: `Sets must not exceed 1000000.`
+
+### Testing `delete`
+
+1. Test a valid delete.
+   - Command: `delete 1`
+   - Expected: `Deleted workout: Easy Run`
+
+2. Enter `history`.
+   - Expected: the old workout 2 is now shown as workout 1:
+     `1. [Lift] Bench Press (Date: <date>) (80.0kg, 3 sets of 10 reps)`
+
+3. Test a non-numeric index.
+   - Command: `delete abc`
+   - Expected: `[ERROR] Workout index must be a positive integer.`
+
+4. Test extra arguments.
+   - Command: `delete 1 2`
+   - Expected:
+     `[ERROR] Invalid format for delete.`
+     followed by `Usage: delete <index>`.
+
+5. Test an out-of-range index.
+   - Command: `delete 99`
+   - Expected: FitLogger reports `Invalid workout index: 99`.
+
+### Testing `search-date`
+
+1. Add a workout if the sample data has been deleted.
+   - Command: `add-run Tempo Run d/5 t/40`
+   - Expected:
+     `Got it. I've added this workout:`
+     followed by `[Run] Tempo Run (Date: <date>) (Distance: 5.0km, Duration: 40.0 mins)`.
+
+2. Search for the date shown in the newly added workout.
+   - Command: `search-date YYYY-MM-DD`, replacing `YYYY-MM-DD` with the displayed workout date.
+   - Expected:
+     `Workouts on YYYY-MM-DD:`
+     followed by workouts logged on that date only.
+
+3. Test a valid date with no matching workouts.
+   - Command: `search-date 1900-01-01`
+   - Expected: `No workouts found.`
+
+4. Test invalid date format.
+   - Command: `search-date 2026/03/15`
+   - Expected:
+     `[ERROR] Invalid date format for search-date.`
+     followed by `Usage: search-date <YYYY-MM-DD>`.
+
+5. Test extra arguments.
+   - Command: `search-date 2026-03-15 extra`
+   - Expected:
+     `[ERROR] Invalid format for search-date.`
+     followed by `Usage: search-date <YYYY-MM-DD>`.
+
+### Testing `exit`
+
+1. Test extra argument rejection.
+   - Command: `exit now`
+   - Expected:
+     `[ERROR] Invalid format for exit.`
+     followed by `Usage: exit`. FitLogger remains running.
+
+2. Test normal exit.
+   - Command: `exit`
+   - Expected:
+     `Workouts saved.`
+     followed by `Goodbye! See you at your next workout!`
+
+3. Restart FitLogger.
+   - Expected: previously saved workouts are loaded again, confirming that exit saved successfully.
